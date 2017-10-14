@@ -1,0 +1,6 @@
+# ignore ckmeans, bp
+ckmeans/*
+bp/*
+
+# ignore temp files
+*~
