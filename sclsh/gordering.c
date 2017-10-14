@@ -61,36 +61,36 @@ unsigned int *transform(const unsigned int *coor, int d){
     return gorder;
 }
 
-
+/**
+ * mex入口：将一个矩阵中的向量转化为g-order编码 
+ * @params	plhs	转换后矩阵 - uint32
+ * @params 	prhs 	待转换矩阵 - uint32
+ * @params 	n 		number of vector
+ * @params 	d 		vector dimension
+ */
 void mexFunction(  int nlhs, mxArray *plhs[],
-                  int nrhs, const mxArray *prhs[], int d){
+                  int nrhs, const mxArray *prhs[]){
 
-  if (nrhs != 2){
-    mexErrMsgTxt("two input required (key array and the dim)");
+  if (nrhs > 1){
+    mexErrMsgTxt("error: more than one input parameters");
   }
-  if(mxGetClassID(prhs[0]) != mxSINGLE_CLASS){
-    mexErrMsgTxt("first parameter must be asingle precision matrix");
+  if(mxGetClassID(prhs[0]) != mxUINT32_CLASS){
+    mexErrMsgTxt("first parameter must be a [uint32] type matrix");
   }
   int d = mxGetM(prhs[0]);
   int n = mxGetN(prhs[0]);
-  float *v = (float*)mxGetPr(prhs[0]);
+  unsigned int *vec = (unsigned int*)mxGetPr(prhs[0]);
 
   if(nlhs > 1){
-    mexErrMsgTxt("one one output required");
+    mexErrMsgTxt("one output required");
   }
-  plhs[0] = mxCreateNumericMatrix(1, n, mxINT32_CLASS, 0);
-  int *cnt = (int*)mxGetPr(plhs[0]);
+  plhs[0] = mxCreateNumericMatrix(1, n, mxUINT32_CLASS, 0);
+  unsigned int *gvec = (unsigned int*)mxGetPr(plhs[0]);
 
   vector<int> vs = {1,2,3};
   
-  int i, j;
-  for(i = 0; i < n; i++){
-    for(j = 0; j < d; j++){
-      if(v[i*d+j] > 0){
-        cnt[i]++;
-      }
-    }
-  }
+  /* transform */
+  gvec = transform(vec, d);
 }
 
 
