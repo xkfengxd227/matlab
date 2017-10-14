@@ -1,0 +1,68 @@
+%% C2LSH+NNG实现邻域碰撞
+
+%% 配置区域
+addpath ../common; addpath ..;
+% 近邻查询参数
+np=1000;                % 允许加载的数据个数
+nk=100;                 % 查询近邻个数
+nq=200;                 % 查询点个数
+% 数据集参数
+dsname=['color'];       % 数据集名称
+U=10000;                % 最大坐标范围(max(ui-li))
+v=fvecs_read(['../../nus_wide/',dsname,'_normbase.fvecs']);
+q=fvecs_read(['../../nus_wide/',dsname,'_normquery.fvecs']);
+gt=ivecs_read(['../../nus_wide/',dsname,'_groundtruth.ivecs']);
+gt=uint32(gt+1);        % 原来存放的gt的id是从0开始的
+gtdis=fvecs_read(['../../nus_wide/',dsname,'_gtdistance.fvecs']);
+nng=ivecs_read(['../../nus_wide/',dsname,'_1000nng.ivecs']);
+n=size(v,2);
+d=size(v,1);
+% 哈希函数参数：m,w,b,a
+lsh.m=389;              % 哈希函数个数
+lsh.w=1;                % 哈希区间宽度
+rand('seed',1);         % （指定随机种子，让每次随机一样（下同））
+lsh.b=rand()*lsh.w;     % b~u(0,w)
+lsh.b = lsh.b + sqrt(d) * U;
+                        % 将哈希值做正向偏移，使得哈希值全部为正
+lsh.a=[];               % 随机向量a：正态分布的单位向量
+randn('seed',1);
+rawa=randn(d,lsh.m);
+lsh.a=norm_vectors(rawa);
+
+%% 对数据集进行LSH编码
+lsh.x=uint32(floor((lsh.a'*v+lsh.b)/lsh.w));
+lsh.qx=uint32(floor((lsh.a'*q+lsh.b)/lsh.w));
+
+%% knn查询
+for qi=1:nq
+    % 第qi个查询点
+    qx=lsh.qx(:,qi);     		% 提取查询点编码
+    counter=zeros(n,1);         % 碰撞计数器置零
+    
+    % 遍历m个倒排文档，统计碰撞次数
+    for mi=1:lsh.m
+        collision_idx=find(lsh.x(mi,:)==qx(mi));
+                                % 第mi列哈希值中与qx的第mi位哈希值相同的数据点ID
+        counter(collision_idx) = counter(collision_idx)+1;
+                                % 发生碰撞的点相应碰撞计数+1
+    end
+    
+    [B,I]=sort(counter,'descend');      % 将数据点按照碰撞次数从高到低排序
+    
+    for ki=1:nk
+        % 第ki最近邻
+        gtid=gt(ki,qi);         % 第ki个最近邻的ID
+        cnt_kinn = counter(gtid);
+        headrank = count(counter<
+    
+%     ### 选取Np个点计算真实距离，排序，返回真实最近邻
+%     cand=I(1:np);                     % 提取前Np个数据点计算真实距离
+%     canddis=odis_query_dataset(v(:,cand),q(:,qi));
+%     [B,I]=sort(canddis);
+%     knn=cand(I(1:nk));
+%     knndis=B(1:nk)';
+% 
+%     accuracy_knn(gt,gtdis,knn,knndis,1,nk);
+%     
+
+

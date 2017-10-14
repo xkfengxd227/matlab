@@ -1,0 +1,18 @@
+% test speed between [loop in matlab] and [loop in c]
+
+d = 32;
+n = 60000;
+v = rand(d,n)-0.5;
+
+tic;
+cnt_m = zeros(1,n);
+for i=1:n
+    cnt_m(i) = sum(v(:,i)>0);
+end
+toc;
+
+tic;
+cnt_c = xikafe_count_positive(v);
+toc;
+
+sum(cnt_m-cnt_c)

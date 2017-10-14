@@ -1,0 +1,8 @@
+### run_lshnng ###
+@desp
+  use lsh to locate candidates, use nng to converge
+@run-direction
+  loaddata;
+    - set the [dsname]
+  run_lshnng
+    - set parameters

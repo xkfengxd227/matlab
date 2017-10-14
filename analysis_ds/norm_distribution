@@ -1,0 +1,18 @@
+%% norm distribute of a dataset
+
+addpath ..
+addpath ../common;
+
+% config
+dsname='color';
+nslt = 1000;
+
+% process
+loaddataset;
+slt=randselect(n, nq);
+vslt=v(:,slt);
+
+len=zeros(1,nslt);
+for i=1:nslt
+    len=norm(vslt(:,i));
+end
