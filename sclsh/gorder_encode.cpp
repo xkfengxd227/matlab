@@ -1,6 +1,7 @@
-// g-ordering
+/**
+ *  mex file for gorder encoding
+ */
 #include "mex.h"
-#include <vector>
 #include <stdlib.h>
 #include <string.h>
 
@@ -84,13 +85,17 @@ void mexFunction(  int nlhs, mxArray *plhs[],
   if(nlhs > 1){
     mexErrMsgTxt("one output required");
   }
-  plhs[0] = mxCreateNumericMatrix(1, n, mxUINT32_CLASS, 0);
+  plhs[0] = mxCreateNumericMatrix(d, n, mxUINT32_CLASS, mxREAL);
   unsigned int *gvec = (unsigned int*)mxGetPr(plhs[0]);
-
-  vector<int> vs = {1,2,3};
   
   /* transform */
-  gvec = transform(vec, d);
+  unsigned int *buff = (unsigned int*)malloc(sizeof(unsigned int) * d);
+  for(int i = 0; i < n; i++){  
+    buff = transform(vec+d*i, d);
+    memcpy(gvec+d*i, buff, sizeof(unsigned int) * d);
+  }
+  
+  free(buff); buff = NULL;
 }
 
 
