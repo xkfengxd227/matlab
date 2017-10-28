@@ -1,7 +1,6 @@
 % random experiments to evaluate average distance(or diff) of NNs along g-order
 
 %% config
-recall_gorder = [];
 for d = [2:2:10]
     dsname=['uniform', num2str(d)];         % dataset name
     I = 2.^[2:8];                           % number of internal
@@ -36,19 +35,22 @@ for d = [2:2:10]
         cnt = 0;
         for ki = 1:k
             % for each k-nn search
-            okinn = oall(:, gt(ki, n+1:end));               % order of all ki-th nn: [d, nq]
+            okinn = oall(:, gt(ki, n+1:end));       % order of all ki-th nn: [d, nq]
             odiff = abs(okinn-oq);
             
             if ki == 1
-                cnt = cnt + sum(odiff <= R);                % 差距小于R
+                cnt = cnt + sum(odiff <= R);
             else
-                valid = find(sum(odiff(1:d-1,:)) == 0);     % 前d-1行之和为0
-                cnt = cnt + sum(odiff(d,valid)<=R);         % 第d行差距小于R
-            end
-        end
+                valid = sum(odiff(
+                cnt = cnt + 
+            
 
-        avg_diff(i) = cnt / nq;
+
+        onn = oall(gt(1,:));
+        oq = oall(n+1:end);
+
+        odiff = abs(oq-onn);
+        avg_diff(i) = mean(odiff);
     end
 
-    recall_gorder=[recall_gorder;avg_diff];
-end;
+    gorder_diff=[gorder_diff;avg_diff];
