@@ -4,3 +4,6 @@ bp/*
 
 # ignore temp files
 *~
+
+# ignore mat files
+*.mat
